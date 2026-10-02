@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Любимому папе</title>
+  <style>
+    :root {
+      --wine-matte: #4a2327;
+      --peach-dust: #eed6ca;
+      --peach-light: #f9f2ef;
+      --bg-creme: #fcf9f7;
+      --text-dark: #332527;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-creme);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container { max-width: 1200px; width: 100%; margin: 0 auto; }
+
+    header {
+      max-width: 750px;
+      margin: 20px auto 40px;
+      padding: 50px 20px;
+      text-align: center;
+      background: var(--peach-light);
+      border: 1px solid var(--peach-dust);
+      border-radius: 24px;
+      box-shadow: 0 4px 15px rgba(238, 214, 202, 0.2);
+    }
+
+    header h1 {
+      margin-bottom: 20px;
+      color: var(--wine-matte);
+      font-size: 2.6rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    header p { font-size: 1.2rem; line-height: 1.7; opacity: 0.9; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      width: 100%;
+      margin-bottom: 50px;
+      padding: 10px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid rgba(238, 214, 202, 0.4);
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(238, 214, 202, 0.15);
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+    }
+
+    .card:hover, .card:focus-visible {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(238, 214, 202, 0.35);
+      outline: none;
+    }
+
+    .card-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+      background-color: var(--peach-light);
+    }
+
+    .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .card:hover img { transform: scale(1.04); }
+
+    .card-badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 1;
+      padding: 4px 12px;
+      color: var(--peach-dust);
+      background: var(--wine-matte);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .card-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      padding: 22px 15px;
+      color: var(--wine-matte);
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-top: 1px solid rgba(238, 214, 202, 0.3);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      pointer-events: none;
+      opacity: 0;
+      background: rgba(51, 37, 39, 0.6);
+      backdrop-filter: blur(6px);
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.active { pointer-events: auto; opacity: 1; }
+
+    .modal-content {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      padding: 45px 35px;
+      text-align: center;
+      background: #fff;
+      border: 2px solid var(--peach-dust);
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .modal.active .modal-content { transform: scale(1); }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      border: none;
+      color: #a38f8c;
+      background: none;
+      cursor: pointer;
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .close-btn:hover { color: var(--wine-matte); }
+    .modal-text { font-size: 1.25rem; line-height: 1.7; }
+
+    @media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+    @media (max-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } header h1 { font-size: 2.2rem; } }
+    @media (max-width: 480px) { body { padding: 10px; } header { padding: 30px 15px; } .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Любимому папе</h1>
+      <p>Этот сайт — коробочка с нашими самыми тёплыми воспоминаниями и важными пожеланиями для тебя, которые так хочется сказать тебе сегодня.</p>
+    </header>
+    <section class="grid" id="wishesGrid" aria-label="Пожелания папе"></section>
+  </main>
+
+  <div class="modal" id="wishModal" role="dialog" aria-modal="true" aria-label="Пожелание">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal" type="button" aria-label="Закрыть">×</button>
+      <p class="modal-text" id="modalText">Текст поздравления...</p>
+    </div>
+  </div>
+
+  <script>
+    const wishesData = [
+      { img: "photo1", title: "Здоровья", wish: "Пусть здоровья хватает на всё, что тебе хочется делать, а каждый новый день приносит спокойствие и силы." },
+      { img: "photo2", title: "Финансового благополучия", wish: "Желаю тебе достатка, финансовой уверенности и возможностей воплощать все свои мечты." },
+      { img: "photo3", title: "Радости", wish: "Желаю замечать больше хорошего в обычных днях и находить поводы улыбаться даже тогда, когда день начинается совсем обычно." },
+      { img: "photo4", title: "Спокойствия", wish: "Пусть в жизни будет больше тихих вечеров, приятных разговоров и ощущения, что всё самое важное находится рядом." },
+      { img: "photo5", title: "Удачи", wish: "Желаю, чтобы нужные возможности появлялись вовремя, решения давались легко, а задуманное постепенно становилось реальностью." },
+      { img: "photo6", title: "Хороших людей", wish: "Пусть рядом встречаются надёжные, добрые и искренние люди, с которыми легко строить планы и приятно проводить время." },
+      { img: "photo7", title: "Больше поводов для гордости", wish: "Пусть каждый твой день приносит чувство гордости за себя, свои решения, поступки и всё, что ты создаёшь." },
+      { img: "photo8", title: "Тепла и уюта", wish: "Желаю возвращаться домой с ощущением тепла и знать, что здесь тебя любят, ждут и всегда рады тебе." },
+      { img: "photo9", title: "Добра и приятных эмоций", wish: "Пусть в твоём сердце всегда живут доброта, спокойствие и радость, а каждый день приносит тёплые и приятные эмоции." },
+      { img: "photo10", title: "Море путешествий", wish: "Пусть впереди будет ещё много мест, которые захочется увидеть, дорог, по которым захочется проехать, и историй, которые потом приятно вспоминать." },
+      { img: "photo11", title: "Всего наилучшего", wish: "Пусть судьба щедро подарит тебе здоровье, счастье, душевный покой и всё самое лучшее." },
+      { img: "photo12", title: "Сил и крепкой выдержки", wish: "Пусть сил хватает не только на обязанности, но и на мечты, планы и всё то, что давно хотелось попробовать." },
+      { img: "photo13", title: "Чтобы твои труды ценили по достоинству", wish: "Пусть каждый твой труд будет замечен, а старания встретят искреннюю благодарность и заслуженное признание." },
+      { img: "photo14", title: "Веры в себя", wish: "Верь в себя так же сильно, как я верю в тебя, ведь ты способен преодолеть любые трудности." },
+      { img: "photo15", title: "Семейного счастья", wish: "Пусть рядом всегда будут люди, с которыми можно быть собой, смеяться, разговаривать обо всём и просто молчать." },
+      { img: "photo16", title: "Целеустремлённости", wish: "Желаю тебе целеустремлённости, сил и уверенности, чтобы достигать всего, чего ты по-настоящему хочешь." }
+    ];
+
+    const grid = document.getElementById("wishesGrid");
+    const modal = document.getElementById("wishModal");
+    const modalText = document.getElementById("modalText");
+    const closeModal = document.getElementById("closeModal");
+    let lastCard = null;
+
+    function fallbackSvg(number) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="100%" height="100%" fill="#f9f2ef"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="52" fill="#4a2327">Фото ${number}</text></svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function openModal(text, card) {
+      lastCard = card;
+      modalText.textContent = text;
+      modal.classList.add("active");
+      closeModal.focus();
+    }
+
+    function closeModalWindow() {
+      modal.classList.remove("active");
+      if (lastCard) lastCard.focus();
+    }
+
+    wishesData.forEach((data, index) => {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `Открыть пожелание: ${data.title}`);
+      card.innerHTML = `
+        <div class="card-image-wrapper">
+          <span class="card-badge">#${index + 1}</span>
+          <img src="${data.img}.jpg.webp" alt="${data.title}" loading="lazy">
+        </div>
+        <div class="card-info">${data.title}</div>
+      `;
+
+      const image = card.querySelector("img");
+      image.addEventListener("error", function tryJpg() {
+        image.removeEventListener("error", tryJpg);
+        image.src = `${data.img}.jpg`;
+        image.addEventListener("error", function showFallback() {
+          image.removeEventListener("error", showFallback);
+          image.src = fallbackSvg(index + 1);
+        });
+      });
+
+      card.addEventListener("click", () => openModal(data.wish, card));
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openModal(data.wish, card);
+        }
+      });
+      grid.appendChild(card);
+    });
+
+    closeModal.addEventListener("click", closeModalWindow);
+    modal.addEventListener("click", (event) => { if (event.target === modal) closeModalWindow(); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && modal.classList.contains("active")) closeModalWindow(); });
+  </script>
+</body>
+</html>
